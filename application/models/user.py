@@ -11,3 +11,4 @@ class User(db.Model):
             "id" : self.id
         }
         return jwt_encode(data)
+
