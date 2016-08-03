@@ -1,6 +1,7 @@
 from . import api
 from application import db
-from application.models.user import User
+from application.models.bucket import UncompleteBucket
+#from application.models.bucket import CompleteBucket
 
 from flask import request, jsonify
 from application.lib.rest.rest_query_helper import (
@@ -17,22 +18,4 @@ import json
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
-
-
-@api.route("/")
-def heool():
-    return "hello woohwa"
-
-@api.route("/users", methods=['GET'])
-def get_users():
-    users = User.query.all()
-    query_list = []
-    for user in users:
-        temp = model_to_dict(user)
-        query_list.append(temp)
-    print(query_list)
-
-    return jsonify(
-        data = query_list
-    )
 
