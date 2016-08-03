@@ -35,4 +35,3 @@ class CompleteBucket(db.Model):
     )
     completedate = db.Column(db.String(200))
     completecomment = db.Column(db.String(500))
-
