@@ -1,7 +1,7 @@
 from . import api
 from application import db
 from application.models.bucket import UncompleteBucket
-#from application.models.bucket import CompleteBucket
+from application.models.bucket import CompleteBucket
 
 from flask import request, jsonify
 from application.lib.rest.rest_query_helper import (

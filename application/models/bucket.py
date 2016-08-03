@@ -22,14 +22,17 @@ class UncompleteBucket(db.Model):
     iscomplete = db.Column(db.Boolean, default = False)
     excesslimit = db.Column(db.Boolean, default = False)
 
-# class CompleteBucket(db.Model):
-#     id = db.Column(db.Integer, primary_key = True)
-#     bucketid = db.Column(db.Integer, db.ForeignKey('bucket.id'))
-#     bucket = db.relationship(
-#         'UncompleteBucket', foreign_keys=[bucketid],
-#         backref=db.backref(
-#             'complete_bucket_list',
-#             cascade='all, delete-orphan',
-#             lazy='dynamic'
-#         )
-#     )
+class CompleteBucket(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    bucketid = db.Column(db.Integer, db.ForeignKey('uncomplete_bucket.id'))
+    uncomplete_bucket = db.relationship(
+        'UncompleteBucket', foreign_keys=[bucketid],
+        backref=db.backref(
+            'complete_bucket_list',
+            cascade='all, delete-orphan',
+            lazy='dynamic'
+        )
+    )
+    completedate = db.Column(db.String(200))
+    completecomment = db.Column(db.String(500))
+
