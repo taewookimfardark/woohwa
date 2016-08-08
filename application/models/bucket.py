@@ -14,7 +14,9 @@ class UncompleteBucket(db.Model):
         )
     )
     title = db.Column(db.String((200)))
+    when_year = db.Column(db.Integer)
     when_month = db.Column(db.Integer)
+    when_day = db.Column(db.Integer)
     where = db.Column(db.String(200))
     info = db.Column(db.String(500))
     reward = db.Column(db.String(200))
@@ -33,5 +35,7 @@ class CompleteBucket(db.Model):
             lazy='dynamic'
         )
     )
-    completedate = db.Column(db.String(200))
+    complete_year = db.Column(db.Integer)
+    complete_month = db.Column(db.Integer)
+    complete_day = db.Column(db.Integer)
     completecomment = db.Column(db.String(500))

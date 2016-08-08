@@ -2,6 +2,7 @@ from . import api
 from application import db
 from application.models.bucket import UncompleteBucket
 from application.models.bucket import CompleteBucket
+from application.models.user import User
 
 from flask import request, jsonify
 from application.lib.rest.rest_query_helper import (
@@ -23,12 +24,16 @@ sys.setdefaultencoding('utf-8')
 
 @api.route("/buckets/uncomplete", methods=['GET'])
 def get_uncomplete_buckets():
+    print "run"
     buckets_uncomplete = UncompleteBucket.query.all()
     query_list = []
     for bucket_uncomplete in buckets_uncomplete:
+        temp_list = []
         temp = model_to_dict(bucket_uncomplete)
-        query_list.append(temp)
-    print(query_list)
+        tempuser = User.query.get(temp.userid)
+        temp_list.append(temp)
+        temp_list.append(tempuser)
+        query_list.append(temp_list)
 
     return jsonify(
         data = query_list
@@ -50,5 +55,5 @@ def post_uncomplete_buckets():
     db.session.add(uncomplete_bucket)
     db.session.commit()
     return jsonify(
-        data=model_to_dict(uncomplete_bucket)
+        bucketdata=model_to_dict(uncomplete_bucket)
     )
