@@ -30,9 +30,9 @@ def get_uncomplete_buckets():
     for bucket_uncomplete in buckets_uncomplete:
         temp_list = []
         temp = model_to_dict(bucket_uncomplete)
-        tempuser = User.query.get(temp.userid)
+        tempuser = User.query.get(int(temp['userid']))
         temp_list.append(temp)
-        temp_list.append(tempuser)
+        temp_list.append(model_to_dict(tempuser))
         query_list.append(temp_list)
 
     return jsonify(
