@@ -1,44 +1,20 @@
 from application import db
-from application.lib.jwt.jwt_helper import (jwt_encode)
-from user import User
 
-class UncompleteBucket(db.Model):
+class Bucket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship(
-        'User', foreign_keys=[userid],
-        backref=db.backref(
-            'uncomplete_bucket_list',
-            cascade='all, delete-orphan',
-            lazy='dynamic'
-        )
-    )
-    title = db.Column(db.String((200)))
-    when_year = db.Column(db.Integer)
-    when_month = db.Column(db.Integer)
-    when_day = db.Column(db.Integer)
-    limit_year = db.Column(db.Integer)
-    limit_month = db.Column(db.Integer)
-    limit_day = db.Column(db.Integer)
-    where = db.Column(db.String(200))
-    info = db.Column(db.String(500))
-    reward = db.Column(db.String(200))
-    status = db.Column(db.Integer)
-    iscomplete = db.Column(db.Boolean, default = False)
-    excesslimit = db.Column(db.Boolean, default = False)
+    group_id = db.Column(db.Integer, db.foreignKey('group.id'))
+    group = db.relationship('Group', foreign_keys=[group_id])
+    user_id = db.Column(db.Integer, db.foreignKey('user.id'))
+    user = db.relationship('User', foreign_keys=[user_id])
+    description = db.Column(db.String(1000))
+    complete_message = db.Column(db.String(1000))
+    start_date = db.Column(db.dateTime, default=db.func.now())
+    limit_date = db.Column(db.dateTime)
+    end_date = db.Column(db.dateTime)
+    profile_image_id = db.Column(db.Integer, db.foreignKey('image.id'))
+    profile_image = db.relationship('Image', foreign_keys=[profile_image_id])
 
-class CompleteBucket(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    bucketid = db.Column(db.Integer, db.ForeignKey('uncomplete_bucket.id'))
-    uncomplete_bucket = db.relationship(
-        'UncompleteBucket', foreign_keys=[bucketid],
-        backref=db.backref(
-            'complete_bucket_list',
-            cascade='all, delete-orphan',
-            lazy='dynamic'
-        )
-    )
-    complete_year = db.Column(db.Integer)
-    complete_month = db.Column(db.Integer)
-    complete_day = db.Column(db.Integer)
-    completecomment = db.Column(db.String(500))
+
+
+
+

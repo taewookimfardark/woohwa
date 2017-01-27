@@ -1,7 +1,5 @@
 from . import api
 from application import db
-from application.models.bucket import UncompleteBucket
-from application.models.bucket import CompleteBucket
 from application.models.user import User
 
 from flask import request, jsonify
