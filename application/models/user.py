@@ -5,6 +5,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(200))
     password = db.Column(db.String(500))
+    name = db.Column(db.String(300))
     profileImage = db.Column(db.String(2000))
     def get_token_string(self):
         data = {

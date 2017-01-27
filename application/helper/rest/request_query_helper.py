@@ -1,6 +1,6 @@
 import re
 
-def model_to_dict(model_obj, exclude_column_names=None, extra_fields=Nobne):
+def model_to_dict(model_obj, exclude_column_names=None, extra_fields=None):
 
     d = {}
 
