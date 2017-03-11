@@ -7,8 +7,7 @@ from application.helper.rest.request_query_helper import (
     model_to_dict
 )
 from application.helper.rest.auth_helpler import (
-    get_user_data_from_request,
-    required_token
+    required_token, get_user_data_from_request
 )
 
 from sqlalchemy import and_
@@ -27,18 +26,19 @@ sys.setdefaultencoding('utf-8')
 def heool():
     return "hello woohwa"
 
-@api.route('/login', method=['POST'])
+@api.route('/login', methods=['POST'])
 def login():
     request_params = request.get_json()
+
     email = request_params.get('email')
     password = request_params.get('password')
 
     user = db.session.query(User).filter(and_(User.email == email, User.password == password)).first()
 
-    if user in None:
+    if user is None:
         return jsonify(
-            userMessage = "존재하지 않는 유저입니다"
-        )
+            userMessage = "no user"
+        ), 400
 
     data = model_to_dict(user)
     token = user.get_token_string()
@@ -57,7 +57,6 @@ def get_users():
     for user in users:
         temp = model_to_dict(user)
         query_list.append(temp)
-    print(query_list)
 
     return jsonify(
         data = query_list
@@ -74,7 +73,7 @@ def post_users():
 
     if q.count() > 0 :
         return jsonify(
-            userMessage = "이미 등록된 이메일입니다"
+            userMessage = "enrolled email"
         )
 
     created_user = User(email = email, password = password, name = name)
@@ -87,7 +86,7 @@ def post_users():
         token=created_user.get_token_string()
     )
 
-@api.route('/users', methods=['GET'])
+@api.route('/users/me', methods=['GET'])
 @required_token
 def get_user_me():
     user_data = get_user_data_from_request(request)

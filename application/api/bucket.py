@@ -1,57 +1,70 @@
+from application import db
+
 from . import api
 from application import db
-from application.models.user import User
 
 from flask import request, jsonify
-from application.lib.rest.rest_query_helper import (
+from application.helper.rest.request_query_helper import (
     model_to_dict
 )
 
-from application.lib.rest.auth_helper import (
-    get_user_data_from_request,
-    required_token
+from application.helper.rest.auth_helpler import (
+    required_token, get_user_data_from_request
 )
 
-#from application.lib.storage.cloud_storage_helper import upload_image
+from application.models.bucket import Bucket
+from application.models.user import User
 
-import json
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+@api.route('/buckets', methods=['POST'])
+@required_token
+def post_buckets():
+    request_params = request.get_json()
+    print request_params
 
+    user_id = get_user_data_from_request(request)['id']
+    group_id = request_params.get('groupId')
+    description = request_params.get('description')
+    title = request_params.get('title')
+    profile_image = request_params.get('profileImage')
+    profile_image_id = request_params.get('profileImageId')
 
-@api.route("/buckets/uncomplete", methods=['GET'])
-def get_uncomplete_buckets():
-    print "run"
-    buckets_uncomplete = UncompleteBucket.query.all()
-    query_list = []
-    for bucket_uncomplete in buckets_uncomplete:
-        temp_list = []
-        temp = model_to_dict(bucket_uncomplete)
-        tempuser = User.query.get(int(temp['userid']))
-        temp_list.append(temp)
-        temp_list.append(model_to_dict(tempuser))
-        query_list.append(temp_list)
+    bucket = Bucket(group_id=group_id,
+                    user_id=user_id,
+                    description=description,
+                    title=title,
+                    profile_image=profile_image,
+                    profile_image_id=profile_image_id)
+
+    db.session.add(bucket)
+    db.session.commit()
 
     return jsonify(
-        data = query_list
+        data=model_to_dict(bucket)
     )
 
-@api.route('/buckets/uncomplete', methods=['POST'])
-def post_uncomplete_buckets():
-    request_params = request.get_json()
-    userid = request_params.get('userid')
-    title = request_params.get('title')
-    when_month = request_params.get('when_month')
-    where = request_params.get('where')
-    info = request_params.get('info')
-    reward = request_params.get('reward')
-    status = request_params.get('status')
-    iscomplete = request_params.get('iscomplete')
-    excesslimit = request_params.get('excesslimit')
-    uncomplete_bucket = UncompleteBucket(userid=userid,title=title,when_month=when_month,where=where,info=info,reward=reward,status=status,iscomplete=iscomplete,excesslimit=excesslimit)
-    db.session.add(uncomplete_bucket)
-    db.session.commit()
+@api.route('/buckets', methods=['GET'])
+@required_token
+def get_buckets():
+    group_id = request.args['groupId']
+
+    if group_id is None:
+        return jsonify(
+            user_mseeage="no group id"
+        ), 400
+
+    q = db.session.query(Bucket, User).filter(Bucket.group_id == group_id) \
+        .join(User).join()
+
+    query_list = q.all()
+
+    data = []
+    for (bucket, user) in query_list:
+        bucket_dict = model_to_dict(bucket)
+        user_dict = model_to_dict(user)
+        user_profile_dict = {'name': user_dict['name'], 'profileImage': user_dict['profileImage']}
+        bucket_dict['user'] = user_profile_dict
+        data.append(bucket_dict)
+
     return jsonify(
-        bucketdata=model_to_dict(uncomplete_bucket)
+        data=data
     )

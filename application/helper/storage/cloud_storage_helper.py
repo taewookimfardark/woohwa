@@ -10,9 +10,13 @@ def _save_file(image_binary, filepath):
     gcs_file.write(image_binary)
     gcs_file.close()
 
-def upload_image(image_binary, folder_name):
-    filename = str(time()).replace('.', '')+".jpg"
-    directory = '/woohwa_bucket/' + folder_name + '/'
+def upload_image(image_binary, folder_name, mimetype):
+    filename = str(time()).replace('.', '')+mimetype
+    directory = '/woowha_bucket/' + folder_name + '/'
     filepath = directory + filename
     _save_file(image_binary, filepath)
     urlpath = 'http://storage.googleapis.com' + directory + filename
+    return (filepath, urlpath)
+
+
+# options={'x-goog-acl':'public-read'}

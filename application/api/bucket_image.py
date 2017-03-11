@@ -15,10 +15,9 @@ from google.appengine.api import images
 from . import api
 from application import db
 from application.helper.rest.auth_helpler import required_token
-from application.models.image import Image
 from application.models.bucket_image import BucketImage
 
-@api.route('/images', methods=['POST'])
+@api.route('/bucket_images', methods=['POST'])
 @required_token
 def upload_images():
     print request.form
@@ -28,7 +27,7 @@ def upload_images():
         ), 401
 
     image = request.files['file']
-    image_params = upload_image(image.read(), 'profile', image.mimetype)
+    image_params = upload_image(image.read(), 'bucket', image.mimetype)
 
     storage_key = image_params[0]
     storage_url = image_params[1]
@@ -41,7 +40,7 @@ def upload_images():
 
     uploader_id = get_user_data_from_request(request)['id']
 
-    created_image = Image(serving_url=serving_url, storage_url=storage_url, uploader_id=uploader_id)
+    created_image = BucketImage(serving_url=serving_url, storage_url=storage_url, uploader_id=uploader_id)
 
     db.session.add(created_image)
     db.session.commit()

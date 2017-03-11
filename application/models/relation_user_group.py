@@ -1,4 +1,6 @@
 from application import db
+from application.models.user import User
+from group import Group
 
 class RelationUserGroup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -12,7 +14,7 @@ class RelationUserGroup(db.Model):
             lazy='dynamic')
         )
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
-    group = db.relatinoship(
+    group = db.relationship(
         'Group',
         foreign_keys=[group_id],
         backref=db.backref(
@@ -26,10 +28,10 @@ class RelationUserGroup(db.Model):
         default=db.func.now(),
         onupdate=db.func.now())
 
-    __table_args__ = (
-        db.UniqueConstraint(
-            'user_id',
-            'group_id',
-            name='unq_uid_gid'
-        )
-    )
+    # __table_args__ = (
+    #     db.UniqueConstraint(
+    #         'user_id',
+    #         'group_id',
+    #         name='unq_uid_gid'
+    #     )
+    # )
