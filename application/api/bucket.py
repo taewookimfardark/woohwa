@@ -5,7 +5,7 @@ from application import db
 
 from flask import request, jsonify
 from application.helper.rest.request_query_helper import (
-    model_to_dict
+    model_to_dict, model_to_dict_params
 )
 
 from application.helper.rest.auth_helpler import (
@@ -19,7 +19,6 @@ from application.models.user import User
 @required_token
 def post_buckets():
     request_params = request.get_json()
-    print request_params
 
     user_id = get_user_data_from_request(request)['id']
     group_id = request_params.get('groupId')
@@ -38,8 +37,13 @@ def post_buckets():
     db.session.add(bucket)
     db.session.commit()
 
+    bucket_dict = model_to_dict(bucket)
+    user = model_to_dict(User.query.get(user_id))
+    user_dict = model_to_dict_params(user, 'id', 'name', 'profileImage', 'profileImageId')
+    bucket_dict['user'] = user_dict
+
     return jsonify(
-        data=model_to_dict(bucket)
+        data=bucket_dict
     )
 
 @api.route('/buckets', methods=['GET'])
@@ -60,9 +64,8 @@ def get_buckets():
     data = []
     for (bucket, user) in query_list:
         bucket_dict = model_to_dict(bucket)
-        user_dict = model_to_dict(user)
-        user_profile_dict = {'name': user_dict['name'], 'profileImage': user_dict['profileImage']}
-        bucket_dict['user'] = user_profile_dict
+        user_dict = model_to_dict_params(user, 'id', 'name', 'profileImage', 'profileImageId')
+        bucket_dict['user'] = user_dict
         data.append(bucket_dict)
 
     return jsonify(
