@@ -32,15 +32,13 @@ def upload_images():
     storage_key = image_params[0]
     storage_url = image_params[1]
 
-    print storage_key
-
     gs_key = blobstore.create_gs_key('/gs' + storage_key)
 
     serving_url = images.get_serving_url(gs_key)
 
-    uploader_id = get_user_data_from_request(request)['id']
+    bucket_id = request.agrs['bucketId']
 
-    created_image = BucketImage(serving_url=serving_url, storage_url=storage_url, uploader_id=uploader_id)
+    created_image = BucketImage(serving_url=serving_url, storage_url=storage_url, bucket_id=bucket_id)
 
     db.session.add(created_image)
     db.session.commit()
