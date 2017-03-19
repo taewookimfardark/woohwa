@@ -17,17 +17,19 @@ from application import db
 from application.helper.rest.auth_helpler import required_token
 from application.models.bucket_image import BucketImage
 
-@api.route('/bucket_images', methods=['POST'])
+@api.route('/bucket-images', methods=['POST'])
 @required_token
 def upload_images():
-    print request.form
+    print 'call'
     if dict(request.files) == {}:
         return jsonify(
             user_message = 'no image'
         ), 401
-
+    print 'call'
     image = request.files['file']
     image_params = upload_image(image.read(), 'bucket', image.mimetype)
+
+    print image_params
 
     storage_key = image_params[0]
     storage_url = image_params[1]

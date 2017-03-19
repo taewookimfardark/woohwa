@@ -10,6 +10,7 @@ class Bucket(db.Model):
     status = db.Column(db.Enum('REQUESTED', 'ACCEPTED', 'REJECTED', 'COMPLETED'), default='REQUESTED')
     title = db.Column(db.String(500))
     description = db.Column(db.String(1000))
+    complete_message = db.Column(db.String(500))
     completed_time = db.Column(db.DateTime)
     profile_image = db.Column(db.String(1024))
     profile_image_id = db.Column(db.Integer)

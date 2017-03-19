@@ -13,7 +13,7 @@ from application.helper.rest.auth_helpler import (
 from application.models.group import Group
 from application.models.relation_user_group import RelationUserGroup
 
-@api.route('/relation_user_groups', methods=['POST'])
+@api.route('/relation-user-groups', methods=['POST'])
 @required_token
 def post_relation_user_group():
     request_params = request.get_json()
@@ -27,7 +27,7 @@ def post_relation_user_group():
         data=relation_user_group
     )
 
-@api.route('/relation_user_groups', methods=['GET'])
+@api.route('/relation-user-groups', methods=['GET'])
 @required_token
 def get_relation_user_group():
     user_id = get_user_data_from_request(request)['id']

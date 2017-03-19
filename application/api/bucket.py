@@ -38,7 +38,7 @@ def post_buckets():
     db.session.commit()
 
     bucket_dict = model_to_dict(bucket)
-    user = model_to_dict(User.query.get(user_id))
+    user = User.query.get(user_id)
     user_dict = model_to_dict_params(user, 'id', 'name', 'profileImage', 'profileImageId')
     bucket_dict['user'] = user_dict
 
@@ -70,4 +70,23 @@ def get_buckets():
 
     return jsonify(
         data=data
+    )
+
+@api.route('/buckets/<int:bucket_id>', methods=['PUT'])
+@required_token
+def put_buckets(bucket_id):
+    request_params = request.get_json()
+    bucket = Bucket.query.get(bucket_id)
+
+    if bucket is None:
+        return jsonify(
+            userMessage='no bucket'
+        ), 400
+
+    for param in request_params:
+        setattr(bucket, param, request_params.get(param))
+    db.session.commit()
+
+    return jsonify(
+        data=model_to_dict(bucket)
     )
