@@ -19,17 +19,13 @@ from application.models.bucket_image import BucketImage
 
 @api.route('/bucket-images', methods=['POST'])
 @required_token
-def upload_images():
-    print 'call'
+def upload_bucket_images():
     if dict(request.files) == {}:
         return jsonify(
             user_message = 'no image'
         ), 401
-    print 'call'
     image = request.files['file']
     image_params = upload_image(image.read(), 'bucket', image.mimetype)
-
-    print image_params
 
     storage_key = image_params[0]
     storage_url = image_params[1]

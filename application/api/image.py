@@ -21,7 +21,6 @@ from application.models.bucket_image import BucketImage
 @api.route('/images', methods=['POST'])
 @required_token
 def upload_images():
-    print request.form
     if dict(request.files) == {}:
         return jsonify(
             user_message = 'no image'
@@ -32,8 +31,6 @@ def upload_images():
 
     storage_key = image_params[0]
     storage_url = image_params[1]
-
-    print storage_key
 
     gs_key = blobstore.create_gs_key('/gs' + storage_key)
 
