@@ -43,12 +43,18 @@ def post_comments():
 
     message = request_params.get('message')
     bucket_id = request_params.get('bucketId')
-    user_id = get_user_data_from_request(request)
+    user_id = get_user_data_from_request(request)['id']
+
+    print message
+    print bucket_id
+    print user_id
 
     if message is None or bucket_id is None or user_id is None:
         return jsonify(
             userMessage="invalid params"
         ), 400
+
+    print 'gogo'
 
     comment = Comment(user_id=user_id,
                       bucket_id=bucket_id,

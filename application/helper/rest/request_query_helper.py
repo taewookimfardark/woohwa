@@ -1,4 +1,6 @@
 import re
+import datetime
+from calendar import timegm
 
 def model_to_dict(model_obj, exclude_column_names=None, extra_fields=None):
 
@@ -8,7 +10,10 @@ def model_to_dict(model_obj, exclude_column_names=None, extra_fields=None):
         if exclude_column_names is not None \
                 and column.name in exclude_column_names:
             continue
-        d[to_camelcase(column.name)] = getattr(model_obj, column.name)
+        value = getattr(model_obj, column.name)
+        if isinstance(value, datetime.datetime):
+            value = timegm(value.utctimetuple())
+        d[to_camelcase(column.name)] = value
 
     if extra_fields is not None:
         d.update(extra_fields)

@@ -1,8 +1,7 @@
 from application import db
-from bucket import Bucket
-from user import User
+from .model import TimestampMixin
 
-class Comment(db.Model):
+class Comment(db.Model, TimestampMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship(
@@ -25,5 +24,3 @@ class Comment(db.Model):
         )
     )
     message = db.Column(db.String(1024))
-    created_time = db.Column(db.DateTime, default=db.func.now())
-    edited_time = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())

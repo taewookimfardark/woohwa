@@ -33,8 +33,7 @@ def upload_bucket_images():
     gs_key = blobstore.create_gs_key('/gs' + storage_key)
 
     serving_url = images.get_serving_url(gs_key)
-
-    bucket_id = request.agrs['bucketId']
+    bucket_id = request.args['bucketId']
 
     created_image = BucketImage(serving_url=serving_url, storage_url=storage_url, bucket_id=bucket_id)
 
@@ -44,6 +43,29 @@ def upload_bucket_images():
     return jsonify(
         data=model_to_dict(created_image)
     )
+
+@api.route('/bucket-images', methods=['GET'])
+@required_token
+def get_bucket_images():
+    bucket_id = request.args['bucketId']
+    if bucket_id is None:
+        return jsonify(
+            user_message = 'no bucket id'
+        ), 401
+
+    q = db.session.query(BucketImage).filter(BucketImage.bucket_id == bucket_id)
+    image_list = q.all()
+
+    data = []
+
+    for bucket_img in image_list:
+        data.append(model_to_dict(bucket_img))
+
+    return jsonify(
+        data=data
+    )
+
+
 
 
 

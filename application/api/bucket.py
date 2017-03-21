@@ -1,11 +1,10 @@
-from application import db
-
 from . import api
 from application import db
 
+import datetime
 from flask import request, jsonify
 from application.helper.rest.request_query_helper import (
-    model_to_dict, model_to_dict_params
+    model_to_dict, model_to_dict_params, to_snakecase
 )
 
 from application.helper.rest.auth_helpler import (
@@ -56,16 +55,20 @@ def get_buckets():
             user_mseeage="no group id"
         ), 400
 
-    q = db.session.query(Bucket, User).filter(Bucket.group_id == group_id) \
-        .join(User).join()
+    q = Bucket.get_base_query()
 
     query_list = q.all()
 
     data = []
-    for (bucket, user) in query_list:
+
+    for (bucket, user, complete_user) in query_list:
         bucket_dict = model_to_dict(bucket)
-        user_dict = model_to_dict_params(user, 'id', 'name', 'profileImage', 'profileImageId')
-        bucket_dict['user'] = user_dict
+        if user is not None:
+            user_dict = model_to_dict_params(user, 'id', 'name', 'profileImage', 'profileImageId')
+            bucket_dict['user'] = user_dict
+        if complete_user is not None:
+            complete_user_dict = model_to_dict_params(complete_user, 'id', 'name', 'profileImage', 'profileImageId')
+            bucket_dict['complete_user'] = complete_user_dict
         data.append(bucket_dict)
 
     return jsonify(
@@ -84,7 +87,11 @@ def put_buckets(bucket_id):
         ), 400
 
     for param in request_params:
-        setattr(bucket, param, request_params.get(param))
+        col = to_snakecase(param)
+        val = request_params.get(param)
+        if col == 'complete_date':
+            val = datetime.datetime.fromtimestamp(val)
+        setattr(bucket, col, val)
     db.session.commit()
 
     return jsonify(
