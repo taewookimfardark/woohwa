@@ -24,11 +24,15 @@ def post_groups():
     profile_image_id = request_params.get('profileImageId')
 
     user_id = get_user_data_from_request(request)['id']
-    group = Group(name=name, description=description, profile_image=profile_image, profile_image_id=profile_image_id, user_id=user_id)
+    group = Group(name=name,
+                  description=description,
+                  profile_image=profile_image,
+                  profile_image_id=profile_image_id,
+                  user_id=user_id)
     db.session.add(group)
     db.session.commit()
 
-    relation_user_group = RelationUserGroup(user_id=user_id, group_id=group.id)
+    relation_user_group = RelationUserGroup(user_id=user_id, group_id=group.id, status='ACCEPTED')
     db.session.add(relation_user_group)
     db.session.commit()
 
