@@ -35,9 +35,7 @@ def upload_images():
 
     serving_url = images.get_serving_url(gs_key)
 
-    uploader_id = get_user_data_from_request(request)['id']
-
-    created_image = Image(serving_url=serving_url, storage_url=storage_url, uploader_id=uploader_id)
+    created_image = Image(serving_url=serving_url, storage_url=storage_url)
 
     db.session.add(created_image)
     db.session.commit()
