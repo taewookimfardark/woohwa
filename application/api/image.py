@@ -19,7 +19,6 @@ from application.models.image import Image
 from application.models.bucket_image import BucketImage
 
 @api.route('/images', methods=['POST'])
-@required_token
 def upload_images():
     if dict(request.files) == {}:
         return jsonify(

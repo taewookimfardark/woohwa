@@ -9,6 +9,7 @@ class User(db.Model):
     nick_name = db.Column(db.String(300))
     profile_image = db.Column(db.String(1024))
     profile_image_id = db.Column(db.Integer)
+    gender = db.Column(db.Enum('MALE', 'FEMALE'), default='MALE')
     def get_token_string(self):
         data = {
             "email" : self.email,

@@ -1,8 +1,9 @@
 from application import db
 from application.models.user import User
 from group import Group
+from .model import TimestampMixin
 
-class RelationUserGroup(db.Model):
+class RelationUserGroup(db.Model, TimestampMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship(
@@ -23,10 +24,7 @@ class RelationUserGroup(db.Model):
             lazy='dynamic'
         )
     )
-    edited_time = db.Column(
-        db.DateTime,
-        default=db.func.now(),
-        onupdate=db.func.now())
+    status = db.Column(db.Enum('REQUEST', 'ACCEPTED', 'REJECTED'), default='REQUESTED')
 
     # __table_args__ = (
     #     db.UniqueConstraint(

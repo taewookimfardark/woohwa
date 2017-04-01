@@ -4,7 +4,7 @@ from application.models.user import User
 
 from flask import request, jsonify
 from application.helper.rest.request_query_helper import (
-    model_to_dict
+    model_to_dict, model_to_dict_params
 )
 from application.helper.rest.auth_helpler import (
     required_token, get_user_data_from_request
@@ -55,7 +55,7 @@ def get_users():
     users = User.query.all()
     query_list = []
     for user in users:
-        temp = model_to_dict(user)
+        temp = model_to_dict_params(user, 'id', 'name', 'email', 'profileImage', 'profileImageId')
         query_list.append(temp)
 
     return jsonify(
@@ -68,15 +68,23 @@ def post_users():
     email = request_params.get('email')
     password = request_params.get('password')
     name = request_params.get('name')
+    gender = request_params.get('gender')
+    profile_image = request_params.get('profileImage')
+    profile_image_id = request_params.get('profileImageId')
 
     q = db.session.query(User).filter(User.email == email)
 
     if q.count() > 0 :
         return jsonify(
             userMessage = "enrolled email"
-        )
+        ), 400
 
-    created_user = User(email = email, password = password, name = name)
+    created_user = User(email=email,
+                        password=password,
+                        name=name,
+                        gender=gender,
+                        profile_image=profile_image,
+                        profile_image_id=profile_image_id)
 
     db.session.add(created_user)
     db.session.commit()

@@ -24,24 +24,26 @@ def upload_bucket_images():
         return jsonify(
             user_message = 'no image'
         ), 401
-    image = request.files['file']
-    image_params = upload_image(image.read(), 'bucket', image.mimetype)
-
-    storage_key = image_params[0]
-    storage_url = image_params[1]
-
-    gs_key = blobstore.create_gs_key('/gs' + storage_key)
-
-    serving_url = images.get_serving_url(gs_key)
+    files = request.files
     bucket_id = request.args['bucketId']
+    bucket_images = []
+    for image_file in files:
+        image = request.files[image_file]
+        image_params = upload_image(image.read(), 'bucket', image.mimetype)
 
-    created_image = BucketImage(serving_url=serving_url, storage_url=storage_url, bucket_id=bucket_id)
+        storage_key = image_params[0]
+        storage_url = image_params[1]
 
-    db.session.add(created_image)
-    db.session.commit()
+        gs_key = blobstore.create_gs_key('/gs' + storage_key)
+
+        serving_url = images.get_serving_url(gs_key)
+        created_image = BucketImage(serving_url=serving_url, storage_url=storage_url, bucket_id=bucket_id)
+        db.session.add(created_image)
+        db.session.commit()
+        bucket_images.append(model_to_dict(created_image))
 
     return jsonify(
-        data=model_to_dict(created_image)
+        data=bucket_images
     )
 
 @api.route('/bucket-images', methods=['GET'])
